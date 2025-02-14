@@ -12,13 +12,39 @@ using NuvellAPI.Models;
 
 namespace NuvellAPI.Services;
 
-public class AuthService(AppDbContext context, IConfiguration configuration) : IAuthService
+/// <summary>
+/// Provides methods for user registration, login, and JWT token creation.
+/// </summary>
+public class AuthService : IAuthService
 {
+    private readonly AppDbContext _context;
+    private readonly IConfiguration _configuration;
+    private readonly SymmetricSecurityKey _key;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AuthService"/> class.
+    /// </summary>
+    /// <param name="context">The database context.</param>
+    /// <param name="configuration">The configuration settings.</param>
+    /// <exception cref="ArgumentNullException">Thrown when any parameter is null.</exception>
+    public AuthService(AppDbContext context, IConfiguration configuration)
+    {
+        _context = context ?? throw new ArgumentNullException(nameof(context));
+        _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+        
+        _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Token"]!));
+    }
+    
+    /// <summary>
+    /// Registers a new user with the specified credentials.
+    /// </summary>
+    /// <param name="request">The DTO containing the user's registration information.</param>
+    /// <returns>A <see cref="User"/> object if registration was successful; otherwise, null.</returns>
     public async Task<User?> RegisterAsync(UserDto request)
     {
-        if (await context.Users.Where(u => u.Email == request.Email).Select(u => u.Id).FirstOrDefaultAsync() != Guid.Empty)
+        if (await _context.Users.AnyAsync(u => u.Email == request.Email))
         {
-            return null;
+            return null; // e-mail already registered
         }
         
         var user = new User();
@@ -28,48 +54,55 @@ public class AuthService(AppDbContext context, IConfiguration configuration) : I
         user.Email = request.Email;
         user.PasswordHash = hashedPassword;
             
-        context.Users.Add(user);
-        await context.SaveChangesAsync();
+        _context.Users.Add(user);
+        await _context.SaveChangesAsync();
         
         return user;
     }
 
+    /// <summary>
+    /// Logs in a user and returns a JWT token.
+    /// </summary>
+    /// <param name="request">The DTO containing the user's login information.</param>
+    /// <returns>A JWT token as a string if login was successful; otherwise, null.</returns>
     public async Task<string?> LoginAsync(UserDto request)
     {
-        var user = await context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
         if (user == null)
         {
-            return null;
+            return null; //user does not exist
         }
         
         if (new PasswordHasher<User>().VerifyHashedPassword(user, user.PasswordHash, request.Password)
             == PasswordVerificationResult.Failed)
         {
-            return null;
+            return null; //wrong password
         }
             
         return CreateToken(user);
     }
     
+    /// <summary>
+    /// Creates a JWT token for the specified user.
+    /// </summary>
+    /// <param name="user">The user for whom to create the token.</param>
+    /// <returns>A JWT token as a string.</returns>
     private string CreateToken(User user)
     {
         var claims = new List<Claim>
         {
             new Claim(ClaimTypes.Email, user.Email),
             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-            new Claim(ClaimTypes.Role, user.Role),
+            //new Claim(ClaimTypes.Role, user.Role),
         };
-
-        var key = new SymmetricSecurityKey(
-            Encoding.UTF8.GetBytes(configuration.GetValue<string>("Jwt:Token")!));
             
-        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512);
+        var creds = new SigningCredentials(_key, SecurityAlgorithms.HmacSha512);
 
         var tokenDescriptor = new JwtSecurityToken(
-            issuer: configuration.GetValue<string>("Jwt:Issuer"),
-            audience: configuration.GetValue<string>("Jwt:Audience"),
+            issuer: _configuration.GetValue<string>("Jwt:Issuer"),
+            audience: _configuration.GetValue<string>("Jwt:Audience"),
             claims: claims,
-            expires: DateTime.Now.AddMinutes(15),
+            expires: DateTime.UtcNow.AddMinutes(15),
             signingCredentials: creds
         );
             

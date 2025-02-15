@@ -34,7 +34,7 @@ namespace NuvellAPI.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<ActionResult<string>> Login(UserDto request)
+        public async Task<ActionResult<TokenResponseDto>> Login(UserDto request)
         {
             // Check if the model is valid
             if (!ModelState.IsValid)
@@ -48,12 +48,35 @@ namespace NuvellAPI.Controllers
                 });
             }
             
-            var token = await authService.LoginAsync(request);
-            if (token == null)
+            var response = await authService.LoginAsync(request);
+            if (response == null)
             {
                 return BadRequest(new { message = "Username or password is incorrect." });
             }
-            return Ok(token);
+            return Ok(response);
+        }
+
+        [HttpPost("refresh-token")]
+        public async Task<ActionResult<TokenResponseDto>> RefreshToken(RefreshTokenRequestDto request)
+        {
+            // Check if the model is valid
+            if (!ModelState.IsValid)
+            {
+                // Return a 400 Bad Request with validation errors
+                return BadRequest(new
+                {
+                    Message = "Validation failed",
+                    Errors = ModelState.Values.SelectMany(v => v.Errors)
+                        .Select(e => e.ErrorMessage)
+                });
+            }
+            
+            var result = await authService.RefreshTokensAsync(request);
+            if (result == null || result.AccessToken == null || result.RefreshToken == null)
+            {
+                return Unauthorized(new { message = "Refresh token is invalid." });
+            }
+            return Ok(result);
         }
         
         [Authorize]

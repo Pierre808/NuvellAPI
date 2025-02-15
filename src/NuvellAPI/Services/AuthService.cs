@@ -8,8 +8,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using NuvellAPI.Data;
-using NuvellAPI.Entities;
 using NuvellAPI.Models;
+using NuvellAPI.Models.Domain;
+using NuvellAPI.Models.DTOs;
 
 namespace NuvellAPI.Services;
 

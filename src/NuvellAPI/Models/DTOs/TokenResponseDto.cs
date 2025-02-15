@@ -1,5 +1,4 @@
-namespace NuvellAPI.Models;
-
+namespace NuvellAPI.Models.DTOs;
 public class TokenResponseDto
 {
     public required string AccessToken { get; set; }

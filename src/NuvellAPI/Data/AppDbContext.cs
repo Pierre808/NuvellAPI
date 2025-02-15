@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using NuvellAPI.Entities;
+using NuvellAPI.Models.Domain;
 
 namespace NuvellAPI.Data;
 

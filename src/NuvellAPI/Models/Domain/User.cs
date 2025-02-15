@@ -1,4 +1,4 @@
-namespace NuvellAPI.Entities;
+namespace NuvellAPI.Models.Domain;
 
 public class User
 {

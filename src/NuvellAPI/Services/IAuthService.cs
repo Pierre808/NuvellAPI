@@ -1,5 +1,6 @@
-using NuvellAPI.Entities;
 using NuvellAPI.Models;
+using NuvellAPI.Models.Domain;
+using NuvellAPI.Models.DTOs;
 
 namespace NuvellAPI.Services;
 

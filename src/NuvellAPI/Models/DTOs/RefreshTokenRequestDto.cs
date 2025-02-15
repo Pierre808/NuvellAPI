@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace NuvellAPI.Models;
+namespace NuvellAPI.Models.DTOs;
 
 public class RefreshTokenRequestDto
 {

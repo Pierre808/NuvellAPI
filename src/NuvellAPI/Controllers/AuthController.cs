@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using NuvellAPI.Entities;
-using NuvellAPI.Models;
+using NuvellAPI.Models.Domain;
+using NuvellAPI.Models.DTOs;
 using NuvellAPI.Services;
 
 namespace NuvellAPI.Controllers

@@ -1,0 +1,6 @@
+@NuvellAPI_HostAddress = http://localhost:5159
+
+GET {{NuvellAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

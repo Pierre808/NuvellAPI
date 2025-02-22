@@ -98,6 +98,11 @@ public class AuthService(
         {
             return Result<UserResponseDto>.Failure("Invalid refresh token");
         }
+
+        if (email != userResponseDto.Email)
+        {
+            return Result<UserResponseDto>.Failure("Invalid refresh token");
+        }
             
         var user = await userManager.FindByEmailAsync(email);
         if (user == null)

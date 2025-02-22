@@ -42,7 +42,7 @@ public class AuthService(
 
     public async Task<Result<UserResponseDto>> LoginUserAsync(LoginDto loginDto)
     {
-        var user = await userManager.Users.AsNoTracking().FirstOrDefaultAsync(x => x.NormalizedEmail == loginDto.Email!.ToUpper());
+        var user = await userManager.Users.FirstOrDefaultAsync(x => x.NormalizedEmail == loginDto.Email!.ToUpper());
         if (user == null)
         {
             return Result<UserResponseDto>.Failure("Invalid email or password");

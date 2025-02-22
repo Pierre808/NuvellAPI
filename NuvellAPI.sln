@@ -1,0 +1,39 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35806.99 d17.13
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NuvellAPI", "NuvellAPI\NuvellAPI.csproj", "{1396778E-0DB1-48EE-A2AA-2DD0F3D0A612}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{25515A05-E8EF-4C16-A0D8-EDB3F05C8DA5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NuvellApi.IntegrationTests", "tests\NuvellApi.IntegrationTests\NuvellApi.IntegrationTests.csproj", "{23EC6E48-F93B-4A37-B530-4375E02E62FC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{59437459-C1E1-4CC4-8180-71F767B9FD73}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1396778E-0DB1-48EE-A2AA-2DD0F3D0A612}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1396778E-0DB1-48EE-A2AA-2DD0F3D0A612}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1396778E-0DB1-48EE-A2AA-2DD0F3D0A612}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1396778E-0DB1-48EE-A2AA-2DD0F3D0A612}.Release|Any CPU.Build.0 = Release|Any CPU
+		{23EC6E48-F93B-4A37-B530-4375E02E62FC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{23EC6E48-F93B-4A37-B530-4375E02E62FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{23EC6E48-F93B-4A37-B530-4375E02E62FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{23EC6E48-F93B-4A37-B530-4375E02E62FC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {81F7717F-179D-4F7E-8D64-079772563230}
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{23EC6E48-F93B-4A37-B530-4375E02E62FC} = {25515A05-E8EF-4C16-A0D8-EDB3F05C8DA5}
+		{1396778E-0DB1-48EE-A2AA-2DD0F3D0A612} = {59437459-C1E1-4CC4-8180-71F767B9FD73}
+	EndGlobalSection
+EndGlobal

@@ -45,7 +45,7 @@ public class AuthController (IAuthService authService) : ControllerBase
             var result = await authService.LoginUserAsync(request);
             if (!result.Success)
             {
-                return BadRequest(result.ErrorMessage);
+                return Unauthorized(result.ErrorMessage);
             }
             return Ok(result.Data);
         }
@@ -68,7 +68,7 @@ public class AuthController (IAuthService authService) : ControllerBase
             var result = await authService.RefreshTokenAsync(request);
             if (!result.Success)
             {
-                return BadRequest(result.ErrorMessage);
+                return Unauthorized(result.ErrorMessage);
             }
             return Ok(result.Data);
         }

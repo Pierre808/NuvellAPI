@@ -1,19 +1,13 @@
-using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using NuvellAPI.Data;
 using NuvellAPI.Interfaces;
-using NuvellAPI.Migrations;
-using NuvellAPI.Models.Domain;
 using NuvellAPI.Models.DTO;
 
 namespace NuvellAPI.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class AuthController (IAuthService _authService) : ControllerBase
+public class AuthController (IAuthService authService) : ControllerBase
 {
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] RegisterDto request)
@@ -25,7 +19,7 @@ public class AuthController (IAuthService _authService) : ControllerBase
                 return BadRequest(ModelState);
             }
 
-            var result = await _authService.RegisterUserAsync(request);
+            var result = await authService.RegisterUserAsync(request);
             if (!result.Success)
             {
                 return BadRequest(result.ErrorMessage);
@@ -48,7 +42,7 @@ public class AuthController (IAuthService _authService) : ControllerBase
                 return BadRequest(ModelState);
             }
 
-            var result = await _authService.LoginUserAsync(request);
+            var result = await authService.LoginUserAsync(request);
             if (!result.Success)
             {
                 return BadRequest(result.ErrorMessage);
@@ -71,7 +65,7 @@ public class AuthController (IAuthService _authService) : ControllerBase
                 return BadRequest(ModelState);
             }
 
-            var result = await _authService.RefreshTokenAsync(request);
+            var result = await authService.RefreshTokenAsync(request);
             if (!result.Success)
             {
                 return BadRequest(result.ErrorMessage);

@@ -1,5 +1,4 @@
 using NuvellAPI.Models.Common;
-using NuvellAPI.Models.Domain;
 using NuvellAPI.Models.DTO;
 
 namespace NuvellAPI.Interfaces;

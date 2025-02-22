@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NuvellAPI.Data;
 using NuvellAPI.Interfaces;
+using NuvellAPI.Migrations;
 using NuvellAPI.Models.Domain;
 using NuvellAPI.Models.DTO;
 
@@ -79,7 +80,7 @@ public class AuthController : ControllerBase
                 return Unauthorized("Invalid email or password");
             }
 
-            var result = await _signInManager.CheckPasswordSignInAsync(user, request.Password!, false);
+            var result = await _signInManager.CheckPasswordSignInAsync(user, request.Password!, true);
             if (!result.Succeeded)
             {
                 return Unauthorized("Invalid email or password");
@@ -87,6 +88,7 @@ public class AuthController : ControllerBase
 
             var accessToken = await _tokenService.GenerateAccessTokenAsync(user);
             var refreshToken = _tokenService.GenerateRefreshToken();
+            var hashedRefreshToken = _tokenService.HashToken(refreshToken);
 
             var refreshTokenDb = await _context.UserRefreshTokens.FirstOrDefaultAsync(x => x.UserId == user.Id);
             // if refresh-token is null for this user create a new one
@@ -95,15 +97,17 @@ public class AuthController : ControllerBase
                 _context.UserRefreshTokens.Add(new UserRefreshTokens
                 {
                     UserId = user.Id,
-                    RefreshToken = refreshToken,
+                    RefreshToken = hashedRefreshToken,
                     Expiration = DateTime.UtcNow.AddDays(7),
+                    IsActive = true,
                 });
             }
             // else update refresh-token for this user
             else
             {
-                refreshTokenDb.RefreshToken = refreshToken;
+                refreshTokenDb.RefreshToken = hashedRefreshToken;
                 refreshTokenDb.Expiration = DateTime.UtcNow.AddDays(7);
+                refreshTokenDb.IsActive = true;
             }
 
             await _context.SaveChangesAsync();
@@ -140,18 +144,31 @@ public class AuthController : ControllerBase
                 return BadRequest("Invalid refresh token");
             }
             
-            var refreshTokenDb = _context.UserRefreshTokens.FirstOrDefault(x => x.UserId == user.Id);
-            if (refreshTokenDb == null || refreshTokenDb.RefreshToken != request.RefreshToken ||
+            var hashedRefreshToken = _tokenService.HashToken(request.RefreshToken);
+            
+            var refreshTokenDb = await _context.UserRefreshTokens.FirstOrDefaultAsync(x => x.UserId == user.Id 
+                && x.RefreshToken == hashedRefreshToken && x.IsActive == true);
+            if (refreshTokenDb == null || 
+                refreshTokenDb.RefreshToken != hashedRefreshToken ||
                 refreshTokenDb.UserId != user.Id ||
-                refreshTokenDb.Expiration < DateTime.UtcNow)
+                refreshTokenDb.Expiration < DateTime.UtcNow
+                || refreshTokenDb.IsActive == false)
             {
                 return BadRequest("Invalid refresh token");
             }
             
+            _context.UserRefreshTokens.Remove(refreshTokenDb);
+            
             var newAccessToken = await _tokenService.GenerateAccessTokenAsync(user);
             var newRefreshToken = _tokenService.GenerateRefreshToken();
-            
-            refreshTokenDb.RefreshToken = newRefreshToken;
+
+            _context.UserRefreshTokens.Add(new UserRefreshTokens
+            {
+                UserId = user.Id,
+                RefreshToken = _tokenService.HashToken(newRefreshToken),
+                Expiration = DateTime.UtcNow.AddDays(7),
+                IsActive = true,
+            });
             await _context.SaveChangesAsync();
 
             var response = new UserResponseDto

@@ -6,7 +6,7 @@ public class UserRefreshTokens
 {
     public Guid Id { get; set; }
     public required Guid UserId { get; set; }
-    [MaxLength(50)]
+    [MaxLength(256)]
     public required string RefreshToken { get; set; }
     public DateTime Expiration { get; set; }
     public bool IsActive { get; set; }

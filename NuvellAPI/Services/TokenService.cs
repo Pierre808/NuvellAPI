@@ -1,4 +1,5 @@
 using System.IdentityModel.Tokens.Jwt;
+using System.Runtime.Intrinsics.Arm;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
@@ -92,5 +93,10 @@ public class TokenService : ITokenService
 
         // return the principal
         return principal;
+    }
+
+    public string HashToken(string token)
+    {
+        return Convert.ToBase64String(SHA256.HashData(Encoding.UTF8.GetBytes(token)));
     }
 }

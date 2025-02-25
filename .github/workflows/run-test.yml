@@ -1,0 +1,38 @@
+name: CI - Unit Test
+
+on:
+  push:
+    branches:
+      -main
+  pull_request:
+    braches:
+      -main
+
+jobs:
+  test:
+    name: Run Integration Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 9
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '9.0.x'
+
+      - name: Restore Dependencies
+        run: dotnet restore NuvellAPI.sln
+
+      - name: Build Solution
+        run: dotnet build NuvellAPI.sln --configuration Release --no-restore
+
+      - name: Run Integration Tests
+        run: dotnet test test/NuvellApi.IntegrationTests/ --configuration Release --no-build --logger trx --results-directory TestResults
+
+      - name: Upload Test Results
+        uses: actions/upload-artifact@v4
+        with:
+          name: TestResults
+          path: TestResults

@@ -13,6 +13,17 @@ jobs:
     name: Run Integration Tests
     runs-on: ubuntu-latest
 
+    services:
+      postgres:
+        image: postgres:latest
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_USER: nuvell
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: nuvell_test
+        options: --health-cmd="pg_isready -U nuvell" --health-interval=10s --health-timeout=5s --health-retries=5
+
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -21,6 +32,11 @@ jobs:
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '9.0.x'
+
+      - name: Start Docker Service
+        run: |
+          sudo service docker start
+          docker --version
 
       - name: Restore Dependencies
         run: dotnet restore NuvellAPI.sln

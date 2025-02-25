@@ -3,15 +3,20 @@ name: CI - Unit Test
 on:
   push:
     branches:
-      - main
+      - master
   pull_request:
     branches:
-      - main
+      - master
 
 jobs:
   test:
     name: Run Integration Tests
     runs-on: ubuntu-latest
+
+    services:
+      docker:
+        image: docker:20.10.7
+        options: --privileged # Optional, aber kann helfen, Berechtigungsprobleme mit Docker zu vermeiden
 
     steps:
       - name: Checkout Repository
@@ -21,6 +26,11 @@ jobs:
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '9.0.x'
+
+      - name: Start Docker Service
+        run: |
+          sudo service docker start
+          docker --version
 
       - name: Restore Dependencies
         run: dotnet restore NuvellAPI.sln

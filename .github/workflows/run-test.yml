@@ -14,9 +14,15 @@ jobs:
     runs-on: ubuntu-latest
 
     services:
-      docker:
-        image: docker:20.10.7
-        options: --privileged # Optional, aber kann helfen, Berechtigungsprobleme mit Docker zu vermeiden
+      postgres:
+        image: postgres:latest
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_USER: nuvell
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: nuvell_test
+        options: --health-cmd="pg_isready -U nuvell" --health-interval=10s --health-timeout=5s --health-retries=5
 
     steps:
       - name: Checkout Repository

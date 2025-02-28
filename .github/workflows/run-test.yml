@@ -13,42 +13,38 @@ jobs:
     name: Run Integration Tests
     runs-on: ubuntu-latest
 
-    services:
-      postgres:
-        image: postgres:latest
-        ports:
-          - 5432:5432
-        env:
-          POSTGRES_USER: nuvell
-          POSTGRES_PASSWORD: password
-          POSTGRES_DB: nuvell_test
-        options: --health-cmd="pg_isready -U nuvell" --health-interval=10s --health-timeout=5s --health-retries=5
-
     steps:
+      # Step 1: Checkout Repository
       - name: Checkout Repository
         uses: actions/checkout@v4
 
+      # Step 2: Set up .NET SDK
       - name: Setup .NET 9
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '9.0.x'
 
-      - name: Start Docker Service
-        run: |
-          sudo service docker start
-          docker --version
+      # Step 3: Set up Docker
+      - name: Set up Docker
+        uses: docker/setup-buildx-action@v2
 
+      # Step 4: Restore Dependencies
       - name: Restore Dependencies
         run: dotnet restore NuvellAPI.sln
 
+      # Step 5: Build Solution
       - name: Build Solution
         run: dotnet build NuvellAPI.sln --configuration Release --no-restore
 
+      # Step 6: Run Integration Tests (with TestContainers)
       - name: Run Integration Tests
-        run: dotnet test tests/NuvellApi.IntegrationTests/ --configuration Release --no-build --logger trx --results-directory TestResults
+        run: |
+          dotnet test tests/NuvellApi.IntegrationTests/ --configuration Release --no-build --logger trx --results-directory TestResults
 
+      # Step 7: Upload Test Results
       - name: Upload Test Results
         uses: actions/upload-artifact@v4
         with:
           name: TestResults
           path: TestResults
+

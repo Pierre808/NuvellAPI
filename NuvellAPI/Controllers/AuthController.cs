@@ -1,13 +1,14 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using NuvellAPI.Interfaces;
 using NuvellAPI.Models.DTO;
+using NuvellAPI.Services;
 
 namespace NuvellAPI.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class AuthController (IAuthService authService) : ControllerBase
+public class AuthController (AuthService authService) : ControllerBase
 {
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] RegisterDto request)
@@ -64,7 +65,7 @@ public class AuthController (IAuthService authService) : ControllerBase
             {
                 return BadRequest(ModelState);
             }
-
+            
             var result = await authService.RefreshTokenAsync(request);
             if (!result.Success)
             {
@@ -76,12 +77,5 @@ public class AuthController (IAuthService authService) : ControllerBase
         {
             return BadRequest(ex.Message);
         }
-    }
-
-    [Authorize]
-    [HttpGet("authenticated")]
-    public async Task<IActionResult> AuthenticatedOnlyEndpoint()
-    {
-        return await Task.FromResult(Ok("You are authenticated."));
     }
 }

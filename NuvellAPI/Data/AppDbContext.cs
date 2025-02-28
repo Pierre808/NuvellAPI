@@ -12,6 +12,7 @@ public class AppDbContext : IdentityDbContext<AppUser, IdentityRole<Guid>, Guid>
         
     }
     public DbSet<UserRefreshTokens> UserRefreshTokens { get; set; }
+    public DbSet<Workspace> Workspaces { get; set; }
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

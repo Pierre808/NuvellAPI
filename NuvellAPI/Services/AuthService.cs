@@ -2,7 +2,6 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using NuvellAPI.Data;
-using NuvellAPI.Interfaces;
 using NuvellAPI.Models.Common;
 using NuvellAPI.Models.Domain;
 using NuvellAPI.Models.DTO;
@@ -12,9 +11,8 @@ namespace NuvellAPI.Services;
 public class AuthService(
     UserManager<AppUser> userManager,
     SignInManager<AppUser> signInManager,
-    ITokenService tokenService,
+    TokenService tokenService,
     AppDbContext context)
-    : IAuthService
 {
     public async Task<Result<string>> RegisterUserAsync(RegisterDto registerDto)
     {

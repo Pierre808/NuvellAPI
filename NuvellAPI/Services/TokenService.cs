@@ -4,12 +4,11 @@ using System.Security.Cryptography;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
-using NuvellAPI.Interfaces;
 using NuvellAPI.Models.Domain;
 
 namespace NuvellAPI.Services;
 
-public class TokenService : ITokenService
+public class TokenService
 {
     private readonly IConfiguration _config;
     private readonly UserManager<AppUser> _userManager;
@@ -58,7 +57,12 @@ public class TokenService : ITokenService
         
         return Convert.ToBase64String(randomNumber);
     }
-
+    
+    public string HashToken(string token)
+    {
+        return Convert.ToBase64String(SHA256.HashData(Encoding.UTF8.GetBytes(token)));
+    }
+    
     public ClaimsPrincipal GetPrincipalFromExpiredToken(string accessToken)
     {
         var tokenValidationParameters = new TokenValidationParameters
@@ -90,10 +94,5 @@ public class TokenService : ITokenService
 
         // return the principal
         return principal;
-    }
-
-    public string HashToken(string token)
-    {
-        return Convert.ToBase64String(SHA256.HashData(Encoding.UTF8.GetBytes(token)));
     }
 }

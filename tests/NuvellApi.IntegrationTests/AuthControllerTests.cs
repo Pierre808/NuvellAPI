@@ -74,7 +74,6 @@ public class AuthControllerTests(IntegrationTestWebApplicationFactory factory)
         };
 
         var response = await _client.PostAsJsonAsync("/api/auth/login", loginDto);
-        var c = await response.Content.ReadAsStringAsync();
         Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
          
         var content = await response.Content.ReadAsStringAsync();

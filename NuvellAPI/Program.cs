@@ -1,10 +1,8 @@
-using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using NuvellAPI.Data;
-using NuvellAPI.Interfaces;
 using NuvellAPI.Models.Domain;
 using NuvellAPI.Services;
 using Scalar.AspNetCore;
@@ -59,8 +57,10 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-builder.Services.AddScoped<ITokenService, TokenService>();
-builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<TokenService>();
+builder.Services.AddScoped<AuthService>();
+builder.Services.AddScoped<WorkspaceAuthService>();
+builder.Services.AddScoped<WorkspaceService>();
 
 var app = builder.Build();
 

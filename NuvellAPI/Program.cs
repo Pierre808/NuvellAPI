@@ -38,11 +38,7 @@ builder.Services.AddIdentity<AppUser, IdentityRole<Guid>>(options =>
 .AddEntityFrameworkStores<AppDbContext>();
 
 var jwtSecret = Environment.GetEnvironmentVariable("JWT_SECRET") 
-                ?? builder.Configuration["Jwt:Token"]; // Use ENV first
-
-Console.WriteLine("#############");
-Console.WriteLine($"JWT Secret Set? {(string.IsNullOrEmpty(jwtSecret) ? "NO" : "YES")}");
-Console.WriteLine("#############");
+                ?? builder.Configuration["Jwt:Token"];
 
 builder.Services.AddAuthentication(options =>
 {

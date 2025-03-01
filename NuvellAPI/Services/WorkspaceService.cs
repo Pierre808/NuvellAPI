@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Authorization;
 using NuvellAPI.Data;
 using NuvellAPI.Models.Common;
 using NuvellAPI.Models.Domain;

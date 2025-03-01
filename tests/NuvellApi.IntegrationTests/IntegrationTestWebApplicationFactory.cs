@@ -1,12 +1,10 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.IdentityModel.Tokens;
+using Microsoft.Extensions.Logging;
 using NuvellAPI.Data;
 using NuvellAPI.Models.Domain;
 using Testcontainers.PostgreSql;
@@ -23,10 +21,11 @@ public class IntegrationTestWebApplicationFactory : WebApplicationFactory<Progra
     
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
-        //builder.ConfigureAppConfiguration((context, config) =>
-        //{
-        //    config.AddJsonFile("appsettings.Tests.json", optional: false);
-        //});
+        builder.ConfigureLogging(logging =>
+        {
+            logging.ClearProviders();
+            logging.AddConsole();
+        });
         
         builder.ConfigureTestServices(services =>
         {
@@ -48,29 +47,42 @@ public class IntegrationTestWebApplicationFactory : WebApplicationFactory<Progra
     {
         await _databaseContainer.StartAsync();
 
-        using (var scope = Services.CreateScope())
+        using var scope = Services.CreateScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        var logger = scope.ServiceProvider.GetRequiredService<ILogger<IntegrationTestWebApplicationFactory>>();
+
+        try
         {
-            var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
             await dbContext.Database.MigrateAsync();
-            await SeedData(dbContext);
+            await SeedData(scope.ServiceProvider);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Database migration or seeding failed.");
+            throw;
         }
     }
 
-    private async Task SeedData(AppDbContext context)
+    private async Task SeedData(IServiceProvider services)
     {
-        var userManager = Services.CreateScope().ServiceProvider.GetRequiredService<UserManager<AppUser>>();
+        var userManager = services.GetRequiredService<UserManager<AppUser>>();
+        var logger = services.GetRequiredService<ILogger<IntegrationTestWebApplicationFactory>>();
 
-        if (await userManager.FindByEmailAsync("test@test-mail.com") == null)
+        var existingUser = await userManager.FindByEmailAsync("test@test-mail.com");
+
+        if (existingUser == null)
         {
             var user = new AppUser
             {
                 UserName = "test@test-mail.com",
                 Email = "test@test-mail.com",
             };
+
             var result = await userManager.CreateAsync(user, "P@ssw0rd");
 
             if (!result.Succeeded)
             {
+                logger.LogError("User creation failed: {Errors}", string.Join(", ", result.Errors.Select(e => e.Description)));
                 throw new Exception("Failed to create user");
             }
         }

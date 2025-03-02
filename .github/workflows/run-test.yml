@@ -56,9 +56,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: TestResults
-          path: TestResults
-      - name: Publish Test Results to GitHub UI
-        uses: actions/upload-test-results@v2
-        with:
-          framework: xunit
-          path-to-results-files: '**/TestResults/*.trx'
+          path: ./TestResults/*.trx

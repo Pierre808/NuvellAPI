@@ -34,13 +34,17 @@ jobs:
       - name: Set up Docker
         uses: docker/setup-buildx-action@v2
 
+      - name: Verify Docker Installation
+        run: docker --version
+
       # Step 4: Restore Dependencies
       - name: Restore Dependencies
         run: dotnet restore NuvellAPI.sln
 
       # Step 5: Build Solution
       - name: Build Solution
-        run: dotnet build NuvellAPI.sln --configuration Release --no-restore
+        run: |
+          dotnet test tests/NuvellApi.IntegrationTests/ --configuration Release --no-build --logger "console;verbosity=detailed" --results-directory TestResults
 
       # Step 6: Run Integration Tests (with TestContainers)
       - name: Run Integration Tests
@@ -53,4 +57,8 @@ jobs:
         with:
           name: TestResults
           path: TestResults
-
+      - name: Publish Test Results to GitHub UI
+        uses: actions/upload-test-results@v2
+        with:
+          framework: xunit
+          path-to-results-files: '**/TestResults/*.trx'

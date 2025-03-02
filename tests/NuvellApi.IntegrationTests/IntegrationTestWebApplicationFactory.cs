@@ -55,11 +55,13 @@ public class IntegrationTestWebApplicationFactory : WebApplicationFactory<Progra
         try
         {
             await dbContext.Database.MigrateAsync();
+            Console.WriteLine("Database migration completed.");
             await SeedData(scope.ServiceProvider);
+            Console.WriteLine("Database seeding completed.");
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Database migration or seeding failed.");
+            Console.Error.WriteLine($"Database initialization failed: {ex.Message}");
             throw;
         }
     }

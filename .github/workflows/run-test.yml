@@ -43,13 +43,16 @@ jobs:
 
       # Step 5: Build Solution
       - name: Build Solution
-        run: |
-          dotnet test tests/NuvellApi.IntegrationTests/ --configuration Release --no-build --logger "console;verbosity=detailed" --results-directory TestResults
+        run: dotnet build NuvellAPI.sln --configuration Release --no-restore
 
       # Step 6: Run Integration Tests (with TestContainers)
       - name: Run Integration Tests
         run: |
-          dotnet test tests/NuvellApi.IntegrationTests/ --configuration Release --no-build --logger trx --results-directory TestResults
+          dotnet test tests/NuvellApi.IntegrationTests/ \
+            --configuration Release \
+            --no-build \
+            --logger trx \
+            --results-directory TestResults
 
       # Step 7: Upload Test Results
       - name: Upload Test Results

@@ -1,10 +1,11 @@
 using System.Net;
 using System.Net.Http.Json;
 using NuvellAPI.Models.DTO;
+using Xunit.Abstractions;
 
 namespace NuvellApi.IntegrationTests;
 
-public class AuthControllerTests(IntegrationTestWebApplicationFactory factory)
+public class AuthControllerTests(IntegrationTestWebApplicationFactory factory, ITestOutputHelper testOutputHelper)
     : IClassFixture<IntegrationTestWebApplicationFactory>
 {
     private readonly HttpClient _client = factory.CreateClient();
@@ -61,6 +62,9 @@ public class AuthControllerTests(IntegrationTestWebApplicationFactory factory)
 
         // Log the actual response
         string responseBody = await response.Content.ReadAsStringAsync();
+        testOutputHelper.WriteLine("############");
+        testOutputHelper.WriteLine(responseBody);
+        testOutputHelper.WriteLine("############");
         Assert.Equal("", responseBody);
         
         Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);

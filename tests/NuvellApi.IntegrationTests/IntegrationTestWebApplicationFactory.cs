@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NuvellAPI.Data;
@@ -21,12 +22,6 @@ public class IntegrationTestWebApplicationFactory : WebApplicationFactory<Progra
     
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
-        builder.ConfigureLogging(logging =>
-        {
-            logging.ClearProviders();
-            logging.AddConsole();
-        });
-        
         builder.ConfigureTestServices(services =>
         {
             var descriptor = services.SingleOrDefault(s => s.ServiceType == typeof(DbContextOptions<AppDbContext>));
@@ -49,18 +44,9 @@ public class IntegrationTestWebApplicationFactory : WebApplicationFactory<Progra
 
         using var scope = Services.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-        var logger = scope.ServiceProvider.GetRequiredService<ILogger<IntegrationTestWebApplicationFactory>>();
 
-        try
-        {
-            await dbContext.Database.MigrateAsync();
-            await SeedData(scope.ServiceProvider);
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "Database migration or seeding failed.");
-            throw;
-        }
+        await dbContext.Database.MigrateAsync();
+        await SeedData(scope.ServiceProvider);
     }
 
     private async Task SeedData(IServiceProvider services)

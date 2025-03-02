@@ -1,6 +1,7 @@
 using System.Net;
 using System.Net.Http.Json;
 using NuvellAPI.Models.DTO;
+using Xunit.Abstractions;
 
 namespace NuvellApi.IntegrationTests;
 
@@ -26,25 +27,25 @@ public class AuthControllerTests(IntegrationTestWebApplicationFactory factory)
         var content = await response.Content.ReadAsStringAsync();
         Assert.Contains("Email already exists", content);
     }
-    
+
     [Fact]
     public async Task Register_ReturnsOk_WhenNewUser()
     {
         // user test2@test-mail.com is a new user
         var registerDto = new RegisterDto
-        { 
-            Email = "test2@test-mail.com", 
-            Password = "P@ssw0rd" 
+        {
+            Email = "test2@test-mail.com",
+            Password = "P@ssw0rd"
         };
 
         var response = await _client.PostAsJsonAsync("/api/auth/register", registerDto);
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-         
+
         var content = await response.Content.ReadAsStringAsync();
         Assert.Contains("test2@test-mail.com", content);
     }
-    
+
     [Fact]
     public async Task Login_ReturnsUnauthorized_WhenEmailDoesNotExist()
     {
@@ -56,10 +57,6 @@ public class AuthControllerTests(IntegrationTestWebApplicationFactory factory)
         };
 
         var response = await _client.PostAsJsonAsync("/api/auth/login", loginDto);
-
-        // Log the actual response
-        string responseBody = await response.Content.ReadAsStringAsync();
-        Console.WriteLine($"API Response - Status: {response.StatusCode}, Body: {responseBody}");
         
         Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
          

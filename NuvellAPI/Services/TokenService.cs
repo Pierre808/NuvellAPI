@@ -18,7 +18,15 @@ public class TokenService
     {
         _config = config;
         _userManager = userManager;
-        _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["JWT:Token"]!));
+        
+        var jwtSecret = Environment.GetEnvironmentVariable("JWT_SECRET") ?? _config["Jwt:Token"];
+       
+        if (string.IsNullOrWhiteSpace(jwtSecret))
+        {
+            throw new InvalidOperationException("JWT secret is missing.");
+        }
+        
+        _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecret));
     }
 
     public async Task<string> GenerateAccessTokenAsync(AppUser user)

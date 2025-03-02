@@ -66,6 +66,7 @@ public class AuthControllerTests(IntegrationTestWebApplicationFactory factory, I
         testOutputHelper.WriteLine(responseBody);
         testOutputHelper.WriteLine("############");
         testOutputHelper.WriteLine("ENV: " + Environment.GetEnvironmentVariable("JWT_SECRET"));
+        testOutputHelper.WriteLine("ENV-Length: " + Environment.GetEnvironmentVariable("JWT_SECRET")?.Length);
         testOutputHelper.WriteLine("############");
         
         Assert.Equal("", responseBody);

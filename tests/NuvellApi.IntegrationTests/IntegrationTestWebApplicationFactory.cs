@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NuvellAPI.Data;
@@ -21,12 +22,12 @@ public class IntegrationTestWebApplicationFactory : WebApplicationFactory<Progra
     
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
-        builder.ConfigureLogging(logging =>
+        /*
+         builder.ConfigureAppConfiguration((context, config) =>
         {
-            logging.ClearProviders();
-            logging.AddConsole();
-            logging.SetMinimumLevel(LogLevel.Debug);
+            config.AddJsonFile("appsettings.test.json", optional: false);
         });
+        */
         
         builder.ConfigureTestServices(services =>
         {

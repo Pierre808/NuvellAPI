@@ -43,6 +43,7 @@ if (string.IsNullOrWhiteSpace(jwtSecret))
 {
     throw new InvalidOperationException("JWT secret is missing.");
 }
+
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme =

@@ -20,6 +20,15 @@ jobs:
         run: |
           echo "JWT_SECRET is set? " $(if [ -z "$JWT_SECRET" ]; then echo "NO"; else echo "YES"; fi)
           echo "DB_CONNECTION is set? " $(if [ -z "$DB_CONNECTION" ]; then echo "NO"; else echo "YES"; fi)
+
+      - name: Debug Partial JWT_SECRET
+        run: |
+          if [ -z "$JWT_SECRET" ]; then 
+            echo "JWT_SECRET is NOT set";
+          else 
+            echo "First 4 characters of JWT_SECRET: ${JWT_SECRET:0:4}****";
+          fi
+
       # Step 1: Checkout Repository
       - name: Checkout Repository
         uses: actions/checkout@v4

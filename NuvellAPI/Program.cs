@@ -87,6 +87,14 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.Run();
+try
+{
+    app.Run();
+}
+catch (Exception ex)
+{
+    app.Logger.LogCritical(ex, "Application failed to start.");
+    throw;
+}
 
 public partial class Program { }

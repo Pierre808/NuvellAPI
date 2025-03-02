@@ -25,6 +25,7 @@ public class IntegrationTestWebApplicationFactory : WebApplicationFactory<Progra
         {
             logging.ClearProviders();
             logging.AddConsole();
+            logging.SetMinimumLevel(LogLevel.Debug);
         });
         
         builder.ConfigureTestServices(services =>

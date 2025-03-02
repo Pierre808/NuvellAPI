@@ -8,6 +8,25 @@ namespace NuvellAPI.Controllers;
 [ApiController]
 public class AuthController (AuthService authService) : ControllerBase
 {
+    [HttpPost("test")]
+    public async Task<IActionResult> Test()
+    {
+        try
+        {
+            if (!ModelState.IsValid)
+            {
+                throw new InvalidOperationException("Modelstate is invalid.");
+            }
+
+            return Ok();
+        }
+        catch (Exception ex)
+        {
+            throw new ApplicationException("An unexpected error occured.", ex);
+            return BadRequest();
+        }
+    }
+    
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] RegisterDto request)
     {

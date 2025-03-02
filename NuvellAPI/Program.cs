@@ -23,7 +23,7 @@ var dbConnectionString = Environment.GetEnvironmentVariable("DB_CONNECTION")
                          ?? builder.Configuration.GetConnectionString("DefaultConnection");
 
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString(dbConnectionString!)));
+    options.UseNpgsql(dbConnectionString));
 
 builder.Services.AddIdentity<AppUser, IdentityRole<Guid>>(options =>
 {
@@ -39,7 +39,10 @@ builder.Services.AddIdentity<AppUser, IdentityRole<Guid>>(options =>
 
 var jwtSecret = Environment.GetEnvironmentVariable("JWT_SECRET") 
                 ?? builder.Configuration["Jwt:Token"];
-
+if (string.IsNullOrWhiteSpace(jwtSecret))
+{
+    throw new InvalidOperationException("JWT secret is missing.");
+}
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme =

@@ -8,6 +8,13 @@ public class AuthControllerTests(IntegrationTestWebApplicationFactory factory)
     : IClassFixture<IntegrationTestWebApplicationFactory>
 {
     private readonly HttpClient _client = factory.CreateClient();
+
+    [Fact]
+    public async Task Test_Test_Endpoint()
+    {
+        var response = await _client.PostAsJsonAsync("/api/auth/test", "");
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+    }
     
     [Fact]
     public async Task Register_ReturnsBadRequest_WhenUserAlreadyExists()

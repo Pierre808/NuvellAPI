@@ -65,6 +65,9 @@ public class AuthControllerTests(IntegrationTestWebApplicationFactory factory, I
         testOutputHelper.WriteLine("############");
         testOutputHelper.WriteLine(responseBody);
         testOutputHelper.WriteLine("############");
+        testOutputHelper.WriteLine("ENV: " + Environment.GetEnvironmentVariable("JWT_SECRET"));
+        testOutputHelper.WriteLine("############");
+        
         Assert.Equal("", responseBody);
         
         Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);

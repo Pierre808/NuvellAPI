@@ -28,7 +28,6 @@ public class IntegrationTestWebApplicationFactory : WebApplicationFactory<Progra
             config.AddJsonFile("appsettings.test.json", optional: false);
         });
         */
-        
         builder.ConfigureTestServices(services =>
         {
             var descriptor = services.SingleOrDefault(s => s.ServiceType == typeof(DbContextOptions<AppDbContext>));

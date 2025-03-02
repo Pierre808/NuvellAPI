@@ -19,7 +19,7 @@ public class TokenService
         _config = config;
         _userManager = userManager;
         
-        var jwtSecret = Environment.GetEnvironmentVariable("JWT_SECRET") ?? _config["JWT_SECRET"];
+        var jwtSecret = Environment.GetEnvironmentVariable("JWT_SECRET") ?? _config["Jwt:Token"];
        
         if (string.IsNullOrWhiteSpace(jwtSecret))
         {

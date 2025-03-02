@@ -22,12 +22,6 @@ public class IntegrationTestWebApplicationFactory : WebApplicationFactory<Progra
     
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
-        /*
-         builder.ConfigureAppConfiguration((context, config) =>
-        {
-            config.AddJsonFile("appsettings.test.json", optional: false);
-        });
-        */
         builder.ConfigureTestServices(services =>
         {
             var descriptor = services.SingleOrDefault(s => s.ServiceType == typeof(DbContextOptions<AppDbContext>));
@@ -50,20 +44,9 @@ public class IntegrationTestWebApplicationFactory : WebApplicationFactory<Progra
 
         using var scope = Services.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-        var logger = scope.ServiceProvider.GetRequiredService<ILogger<IntegrationTestWebApplicationFactory>>();
 
-        try
-        {
-            await dbContext.Database.MigrateAsync();
-            Console.WriteLine("Database migration completed.");
-            await SeedData(scope.ServiceProvider);
-            Console.WriteLine("Database seeding completed.");
-        }
-        catch (Exception ex)
-        {
-            Console.Error.WriteLine($"Database initialization failed: {ex.Message}");
-            throw;
-        }
+        await dbContext.Database.MigrateAsync();
+        await SeedData(scope.ServiceProvider);
     }
 
     private async Task SeedData(IServiceProvider services)

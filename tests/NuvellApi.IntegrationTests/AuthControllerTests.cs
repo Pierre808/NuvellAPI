@@ -5,12 +5,11 @@ using Xunit.Abstractions;
 
 namespace NuvellApi.IntegrationTests;
 
-public class AuthControllerTests(IntegrationTestWebApplicationFactory factory, ITestOutputHelper testOutputHelper)
+public class AuthControllerTests(IntegrationTestWebApplicationFactory factory)
     : IClassFixture<IntegrationTestWebApplicationFactory>
 {
     private readonly HttpClient _client = factory.CreateClient();
     
-    /*
     [Fact]
     public async Task Register_ReturnsBadRequest_WhenUserAlreadyExists()
     {
@@ -28,26 +27,25 @@ public class AuthControllerTests(IntegrationTestWebApplicationFactory factory, I
         var content = await response.Content.ReadAsStringAsync();
         Assert.Contains("Email already exists", content);
     }
-    
+
     [Fact]
     public async Task Register_ReturnsOk_WhenNewUser()
     {
         // user test2@test-mail.com is a new user
         var registerDto = new RegisterDto
-        { 
-            Email = "test2@test-mail.com", 
-            Password = "P@ssw0rd" 
+        {
+            Email = "test2@test-mail.com",
+            Password = "P@ssw0rd"
         };
 
         var response = await _client.PostAsJsonAsync("/api/auth/register", registerDto);
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-         
+
         var content = await response.Content.ReadAsStringAsync();
         Assert.Contains("test2@test-mail.com", content);
     }
-    */
-    
+
     [Fact]
     public async Task Login_ReturnsUnauthorized_WhenEmailDoesNotExist()
     {
@@ -59,17 +57,6 @@ public class AuthControllerTests(IntegrationTestWebApplicationFactory factory, I
         };
 
         var response = await _client.PostAsJsonAsync("/api/auth/login", loginDto);
-
-        // Log the actual response
-        string responseBody = await response.Content.ReadAsStringAsync();
-        testOutputHelper.WriteLine("############");
-        testOutputHelper.WriteLine(responseBody);
-        testOutputHelper.WriteLine("############");
-        testOutputHelper.WriteLine("ENV: " + Environment.GetEnvironmentVariable("JWT_SECRET"));
-        testOutputHelper.WriteLine("ENV-Length: " + Environment.GetEnvironmentVariable("JWT_SECRET")?.Length);
-        testOutputHelper.WriteLine("############");
-        
-        Assert.Equal("", responseBody);
         
         Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
          
@@ -77,7 +64,6 @@ public class AuthControllerTests(IntegrationTestWebApplicationFactory factory, I
         Assert.Contains("Invalid email or password", content);
     }
     
-    /*
     [Fact]
     public async Task Login_ReturnsUnauthorized_WhenWrongPassword()
     {
@@ -160,6 +146,5 @@ public class AuthControllerTests(IntegrationTestWebApplicationFactory factory, I
         var response = await _client.PostAsJsonAsync("/api/auth/token/refresh", refreshTokenDto);
         Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
     }
-    */
 
 }

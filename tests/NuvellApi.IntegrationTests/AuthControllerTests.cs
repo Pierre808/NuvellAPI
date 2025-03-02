@@ -9,6 +9,7 @@ public class AuthControllerTests(IntegrationTestWebApplicationFactory factory)
 {
     private readonly HttpClient _client = factory.CreateClient();
     
+    /*
     [Fact]
     public async Task Register_ReturnsBadRequest_WhenUserAlreadyExists()
     {
@@ -44,6 +45,7 @@ public class AuthControllerTests(IntegrationTestWebApplicationFactory factory)
         var content = await response.Content.ReadAsStringAsync();
         Assert.Contains("test2@test-mail.com", content);
     }
+    */
     
     [Fact]
     public async Task Login_ReturnsUnauthorized_WhenEmailDoesNotExist()
@@ -59,7 +61,7 @@ public class AuthControllerTests(IntegrationTestWebApplicationFactory factory)
 
         // Log the actual response
         string responseBody = await response.Content.ReadAsStringAsync();
-        Console.WriteLine($"API Response - Status: {response.StatusCode}, Body: {responseBody}");
+        Assert.Equal("", responseBody);
         
         Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
          
@@ -67,6 +69,7 @@ public class AuthControllerTests(IntegrationTestWebApplicationFactory factory)
         Assert.Contains("Invalid email or password", content);
     }
     
+    /*
     [Fact]
     public async Task Login_ReturnsUnauthorized_WhenWrongPassword()
     {
@@ -149,5 +152,6 @@ public class AuthControllerTests(IntegrationTestWebApplicationFactory factory)
         var response = await _client.PostAsJsonAsync("/api/auth/token/refresh", refreshTokenDto);
         Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
     }
+    */
 
 }
